@@ -1,0 +1,50 @@
+[project]
+name = "uni-research"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "plotly",
+    "bokeh",
+    # ML/DL
+    "torch",
+    "tensorflow",
+    "xgboost",
+    # NLP
+    "transformers",
+    "nltk",
+    "spacy",
+    "textblob",
+    # RL
+    "stable-baselines3",
+    "gymnasium",
+    # Explainability
+    "shap",
+    "lime",
+    # Financial
+    "ta",
+    "empyrical",
+    # API Clients
+    "requests",
+    "python-dotenv",
+    # Data sources (optional)
+    # If you're not using tweepy/praw, remove
+    # "tweepy",
+    # "praw",
+    # Jupyter
+    "notebook",
+    "ipykernel",
+    "jupyterlab",
+    "coinmetrics-api-client>=2025.5.6.13",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.1",
+]

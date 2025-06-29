@@ -1,0 +1,63 @@
+{
+    // editor settings
+    "editor.formatOnSave": true,
+    // python settings
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll.ruff": "explicit"
+        }
+    },
+    "python.analysis.exclude": [
+        "${workspaceFolder}/.history"
+    ],
+    // mark src as source root
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src"
+    ],
+    "search.exclude": {
+        "${workspaceFolder}/.history": true
+    },
+    "files.exclude": {
+        "${workspaceFolder}/.history": true
+    },
+    "ruff.exclude": [
+        "${workspaceFolder}/.history"
+    ],
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.hg/store/**": true,
+        "**/.history/**": true
+    },
+    "explorer.autoRevealExclude": {
+        "**/.history": true
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    // ruff settings
+    "ruff.interpreter": [
+        "/Users/komronvalijonov/work/personal/uni-research/.venv/bin/python"
+    ],
+    "ruff.path": [
+        "/Users/komronvalijonov/work/personal/uni-research/.venv/bin/ruff"
+    ],
+    // "ruff.configuration": "${workspaceFolder}/ruff.toml",
+    "ruff.organizeImports": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "makefile.configureOnOpen": false,
+    "workbench.colorCustomizations": {
+        "[Atom One Dark]": {
+            "sideBar.background": "#2b2d30",
+            "sideBar.foreground": "#d6d8dc",
+            "editor.background": "#1f2023",
+            "editor.foreground": "#bcbdbe",
+        }
+    },
+    "workbench.tree.indent": 20,
+}
