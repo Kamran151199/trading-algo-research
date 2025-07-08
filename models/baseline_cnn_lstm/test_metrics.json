@@ -1,0 +1,13 @@
+{
+  "rmse": 4807.172882414682,
+  "mae": 4317.508831501715,
+  "r2": -3.360558253916051,
+  "mape": 4.044891068826359,
+  "directional_accuracy": 46.51162790697674,
+  "return_correlation": -0.08344341018111699,
+  "sharpe_ratio_actual": 0.8465599781915629,
+  "max_drawdown_actual": -9.600266555647934,
+  "max_drawdown_predicted": -8.693220106778124,
+  "rmse_normalized": 0.04528219294334528,
+  "mae_normalized": 0.04066969770482926
+}

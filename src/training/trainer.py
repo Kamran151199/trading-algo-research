@@ -19,7 +19,7 @@ import torch.nn as nn
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader, TensorDataset
 
-from ..evaluation.metrics import evaluate_model_predictions
+from evaluation.metrics import evaluate_model_predictions
 
 
 class ModelTrainer:
