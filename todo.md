@@ -30,7 +30,7 @@ Implementation of a comprehensive cryptocurrency price prediction system using h
 #### 3.1 Hybrid CNN-LSTM Model (RQ1)
 - [DONE] Implement CNN layers for feature extraction
 - [DONE] Add LSTM layers for temporal pattern recognition
-- [ ] Integrate attention mechanisms
+- [DONE] Integrate attention mechanisms
 - [ ] Create multi-modal data fusion architecture
 
 #### 3.2 Reinforcement Learning Models (RQ2)
