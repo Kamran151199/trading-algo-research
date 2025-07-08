@@ -50,7 +50,6 @@ if __name__ == "__main__":
 
     combined_df = align_and_merge_data(market_df, onchain_df)
 
-    # print the preview of the combined DataFrame
     print("Combined DataFrame preview:")
     print(combined_df.head())
 

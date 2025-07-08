@@ -26,10 +26,8 @@ class TemporalAttention(nn.Module):
         assert hidden_size % num_heads == 0, "hidden_size must be divisible by num_heads"
         
         if num_heads == 1:
-            # Simple single-head attention
             self.attention = nn.Linear(hidden_size, 1, bias=False)
         else:
-            # Multi-head attention
             self.query = nn.Linear(hidden_size, hidden_size, bias=False)
             self.key = nn.Linear(hidden_size, hidden_size, bias=False)
             self.value = nn.Linear(hidden_size, hidden_size, bias=False)
@@ -38,22 +36,18 @@ class TemporalAttention(nn.Module):
         self.dropout = nn.Dropout(0.1)
         
     def forward(self, x):
-        # x: (batch_size, seq_len, hidden_size)
         batch_size, seq_len, hidden_size = x.size()
         
         if self.num_heads == 1:
-            # Simple attention
-            attention_scores = self.attention(x)  # (batch, seq_len, 1)
-            attention_weights = F.softmax(attention_scores, dim=1)  # (batch, seq_len, 1)
-            attended_output = torch.sum(attention_weights * x, dim=1)  # (batch, hidden_size)
+            attention_scores = self.attention(x)
+            attention_weights = F.softmax(attention_scores, dim=1)
+            attended_output = torch.sum(attention_weights * x, dim=1)
             return attended_output, attention_weights.squeeze(-1)
         else:
-            # Multi-head attention
             Q = self.query(x).view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
             K = self.key(x).view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
             V = self.value(x).view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
             
-            # Scaled dot-product attention
             scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.head_dim)
             attention_weights = F.softmax(scores, dim=-1)
             attention_weights = self.dropout(attention_weights)
@@ -62,12 +56,10 @@ class TemporalAttention(nn.Module):
             attended = attended.transpose(1, 2).contiguous().view(batch_size, seq_len, hidden_size)
             attended = self.out_proj(attended)
             
-            # Global average pooling over sequence dimension
-            attended_output = torch.mean(attended, dim=1)  # (batch, hidden_size)
+            attended_output = torch.mean(attended, dim=1)
             
-            # Return average attention weights for interpretability
-            avg_attention = torch.mean(attention_weights, dim=1)  # (batch, seq_len, seq_len)
-            avg_attention = torch.mean(avg_attention, dim=-1)     # (batch, seq_len)
+            avg_attention = torch.mean(attention_weights, dim=1)
+            avg_attention = torch.mean(avg_attention, dim=-1)
             
             return attended_output, avg_attention
 
@@ -87,13 +79,10 @@ class FeatureAttention(nn.Module):
         )
         
     def forward(self, x):
-        # x: (batch_size, seq_len, num_features)
-        # Compute feature importance weights
-        feature_weights = self.feature_attention(torch.mean(x, dim=1))  # (batch, num_features)
-        feature_weights = feature_weights.unsqueeze(1)  # (batch, 1, num_features)
+        feature_weights = self.feature_attention(torch.mean(x, dim=1))
+        feature_weights = feature_weights.unsqueeze(1)
         
-        # Apply feature attention
-        attended_features = x * feature_weights  # (batch, seq_len, num_features)
+        attended_features = x * feature_weights
         return attended_features, feature_weights.squeeze(1)
 
 
@@ -112,11 +101,9 @@ class CNNLSTMWithAttention(nn.Module):
         self.use_feature_attention = use_feature_attention
         self.use_temporal_attention = use_temporal_attention
         
-        # Feature attention (applied before CNN)
         if self.use_feature_attention:
             self.feature_attention = FeatureAttention(num_features)
         
-        # CNN layers for local pattern extraction
         self.cnn = nn.Sequential(
             nn.Conv1d(
                 in_channels=num_features,
@@ -129,7 +116,6 @@ class CNNLSTMWithAttention(nn.Module):
             nn.Dropout(0.1),
         )
         
-        # LSTM for temporal dependencies
         self.lstm = nn.LSTM(
             input_size=cnn_filters, 
             hidden_size=lstm_units, 
@@ -137,14 +123,12 @@ class CNNLSTMWithAttention(nn.Module):
             dropout=0.1
         )
         
-        # Temporal attention (applied after LSTM)
         if self.use_temporal_attention:
             self.temporal_attention = TemporalAttention(lstm_units, attention_heads)
             final_input_size = lstm_units
         else:
             final_input_size = lstm_units
         
-        # Final prediction layers
         self.fc = nn.Sequential(
             nn.Linear(final_input_size, 64),
             nn.ReLU(),
@@ -155,31 +139,25 @@ class CNNLSTMWithAttention(nn.Module):
         )
 
     def forward(self, x, return_attention_weights=False):
-        # x: (batch_size, sequence_length, num_features)
         attention_weights = {}
         
-        # Apply feature attention
         if self.use_feature_attention:
             x, feature_weights = self.feature_attention(x)
             attention_weights['feature_attention'] = feature_weights
         
-        # CNN processing
-        x = x.permute(0, 2, 1)  # → (batch, features, time)
-        x = self.cnn(x)         # → (batch, filters, time)
-        x = x.permute(0, 2, 1)  # → (batch, time, filters)
+        x = x.permute(0, 2, 1)
+        x = self.cnn(x)
+        x = x.permute(0, 2, 1)
         
-        # LSTM processing
-        lstm_out, _ = self.lstm(x)  # → (batch, time, hidden)
+        lstm_out, _ = self.lstm(x)
         
-        # Apply temporal attention
         if self.use_temporal_attention:
             attended_output, temporal_weights = self.temporal_attention(lstm_out)
             attention_weights['temporal_attention'] = temporal_weights
         else:
-            attended_output = lstm_out[:, -1, :]  # Use last time step
+            attended_output = lstm_out[:, -1, :]
         
-        # Final prediction
-        output = self.fc(attended_output)  # → (batch, 1)
+        output = self.fc(attended_output)
         
         if return_attention_weights:
             return output, attention_weights

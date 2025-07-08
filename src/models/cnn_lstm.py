@@ -34,18 +34,17 @@ class CNNLSTM(nn.Module):
         self.fc = nn.Sequential(nn.Linear(lstm_units, 64), nn.ReLU(), nn.Linear(64, 1))
 
     def forward(self, x):
-        # x: (batch_size, sequence_length, num_features)
-        x = x.permute(0, 2, 1)  # → (batch, features, time)
-        x = self.cnn(x)  # → (batch, filters, time)
-        x = x.permute(0, 2, 1)  # → (batch, time, filters)
-        out, _ = self.lstm(x)  # → (batch, time, hidden)
-        out = out[:, -1, :]  # → last time step
-        out = self.fc(out)  # → (batch, 1)
+        x = x.permute(0, 2, 1)
+        x = self.cnn(x)
+        x = x.permute(0, 2, 1)
+        out, _ = self.lstm(x)
+        out = out[:, -1, :]
+        out = self.fc(out)
         return out
 
 
 if __name__ == "__main__":
     model = CNNLSTM(num_features=16, window_size=30)
-    dummy_input = torch.randn(8, 30, 16)  # (batch, time, features)
+    dummy_input = torch.randn(8, 30, 16)
     output = model(dummy_input)
-    print("Output shape:", output.shape)  # Expected: (8, 1)
+    print("Output shape:", output.shape)

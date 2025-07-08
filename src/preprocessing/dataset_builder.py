@@ -77,8 +77,8 @@ def temporal_split(
 
 
 def visualise(X_train, sample_index=0):
-    i = sample_index  # sample index
-    sample = X_train[i]  # shape (30, 16)
+    i = sample_index  
+    sample = X_train[i]  
 
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(111, projection="3d")
@@ -89,8 +89,8 @@ def visualise(X_train, sample_index=0):
     for f in features:
         ax.plot(
             timesteps,
-            [f] * len(timesteps),  # feature index stays fixed
-            sample[:, f],  # values
+            [f] * len(timesteps),
+            sample[:, f],
             label=f"Feature {f}",
         )
 
@@ -102,14 +102,12 @@ def visualise(X_train, sample_index=0):
 
 
 if __name__ == "__main__":
-    # Load enriched dataset
     df = pd.read_csv(
         "/Users/komronvalijonov/work/personal/uni-research/data/processed/btc_with_indicators.csv",
         parse_dates=["date"],
     )
     df.set_index("date", inplace=True)
 
-    # Define features and target
     features = [
         "open",
         "high",
@@ -130,15 +128,12 @@ if __name__ == "__main__":
     ]
     target = "close"
 
-    # Normalize
     df_norm, scaler = normalize_data(df, features)
 
-    # Create sequences
     X, y = create_sequences(
         df_norm, feature_cols=features, target_col=target, window_size=30
     )
 
-    # Split
     X_train, y_train, X_val, y_val, X_test, y_test = temporal_split(X, y)
 
     print(f"Data split: {X_train.shape=}, {X_val.shape=}, {X_test.shape=}")
